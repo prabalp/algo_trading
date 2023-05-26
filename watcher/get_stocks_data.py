@@ -39,6 +39,7 @@ db = data_managment.data_managment("test.db")
 
 
 def custom_message(msg):
+    print("..................................")
     # change msg in perfect format
     # db.add_data(msg[0])
     # print(msg[0]["symbol"])
@@ -49,9 +50,10 @@ def get_live_data(client_id, access_token, symbol, data_type="symbolData"):
     # ws.websocket_data = custom_message
     fyersSocket = ws.FyersSocket(
         access_token=client_id + ":" + access_token,
-        run_background=True,
+        run_background=False,
         log_path=curr_wd + "/socket_logs/",
     )
+
     fyersSocket.websocket_data = custom_message
     # fyersSocket = ws.FyersSocket(access_token="KPQVRS7JKZ-100",run_background=True,log_path=curr_wd)
     fyersSocket.subscribe(symbol=symbol, data_type=data_type)
