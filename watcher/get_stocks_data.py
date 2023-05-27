@@ -51,7 +51,7 @@ def get_live_data(client_id, access_token, symbol, data_type="symbolData"):
     fyersSocket = ws.FyersSocket(
         access_token=client_id + ":" + access_token,
         run_background=False,
-        log_path=curr_wd + "/socket_logs/",
+        log_path=curr_wd + "/livedata_logs" + "/socket_logs/",
     )
 
     fyersSocket.websocket_data = custom_message

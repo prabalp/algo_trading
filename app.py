@@ -6,9 +6,9 @@ app = Flask(__name__)  # understand this line
 
 @app.route("/", methods=["POST","GET"])
 def home():
-    data = request.data
-    return data
-
+    # data = request.data
+    # return data
+    return "good"
 
 @app.route("/auth_fyers", methods=["POST", "GET"])
 def update_value():
