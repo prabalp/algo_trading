@@ -4,13 +4,13 @@ from flask import request
 app = Flask(__name__)  # understand this line
 
 
-@app.route("/", methods=["POST"])
+@app.route("/", methods=["POST","GET"])
 def home():
     data = request.data
     return data
 
 
-@app.route("/auth_fyers", methods=["POST"])
+@app.route("/auth_fyers", methods=["POST", "GET"])
 def update_value():
     return ""
 
