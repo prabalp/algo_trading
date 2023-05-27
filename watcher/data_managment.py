@@ -1,10 +1,19 @@
 import sqlite3
+import traceback
+
+#edge cases to handel
+# 1- if table is not present
+# 2- if table is present after deleting
+# 3- if data is not present
+# 4- if data is present(primary key errror)
+# 5- if data is not in correct format
 
 
 class data_managment:
     def __init__(self, db_name):
-        conn = sqlite3.connect(db_name)
-        self.cursor = conn.cursor()
+        self.conn = sqlite3.connect(db_name)
+        print("connection established")
+        self.cursor = self.conn.cursor()
         # creating the table
         i_qur = """
             CREATE TABLE stocks
@@ -40,6 +49,29 @@ class data_managment:
 
     def add_data(self, data):
         print("adding data " + data["symbol"])
+        parms = (
+            data["timestamp"],
+            data["symbol"],
+            data["fycode"],
+            data["fyFlag"],
+            data["pktLen"],
+            data["ltp"],
+            data["open_price"],
+            data["high_price"],
+            data["low_price"],
+            data["close_price"],
+            data["min_open_price"],
+            data["min_high_price"],
+            data["min_low_price"],
+            data["min_close_price"],
+            data["min_volume"],
+            data["last_traded_qty"],
+            data["last_traded_time"],
+            data["avg_trade_price"],
+            data["vol_traded_today"],
+            data["tot_buy_qty"],
+            data["tot_sell_qty"],
+        )
         qur = """INSERT INTO stocks (
             timestamp,
             symbol, 
@@ -62,57 +94,76 @@ class data_managment:
             vol_traded_today, 
             tot_buy_qty, 
             tot_sell_qty)
-            VALUES (
-                {},
-                {}, 
-                {}, 
-                {}, 
-                {}, 
-                {}, 
-                {}, 
-                {}, 
-                {}, 
-                {}, 
-                {}, 
-                {}, 
-                {}, 
-                {}, 
-                {}, 
-                {}, 
-                {}, 
-                {}, 
-                {}, 
-                {}, 
-                {}
-            )""".format(
-            data["timestamp"],
-            data["symbol"],
-            data["fycode"],
-            data["fyFlag"],
-            data["pktLen"],
-            data["ltp"],
-            data["open_price"],
-            data["high_price"],
-            data["low_price"],
-            data["close_price"],
-            data["min_open_price"],
-            data["min_high_price"],
-            data["min_low_price"],
-            data["min_close_price"],
-            data["min_volume"],
-            data["last_traded_qty"],
-            data["last_traded_time"],
-            data["avg_trade_price"],
-            data["vol_traded_today"],
-            data["tot_buy_qty"],
-            data["tot_sell_qty"],
-        )  # write a querry to insert data
+            VALUES (?,?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"""
+        # write a querry to insert data
         # print(qur)
-        self.cursor.execute(qur)
-        print("done")
+        try:
+            self.cursor.execute(qur, parms)
+            self.conn.commit()
+            print("data added")
+        except sqlite3.IntegrityError:
+            print("data already present")
+            # print(traceback.format_exc())
+            # print(traceback.print_exc())
+        except:
+            print("data not in correct format")
 
-    def view_data(self):
-        # qur = """ SELECT * FROM stocks"""
-        # self.cursor.execute(qur)
+    def get_data(self):
+        qur = """ SELECT * FROM stocks"""
+        self.cursor.execute(qur)
+        self.conn.commit()
         res = self.cursor.fetchall()
+        # self.conn.commit()
         print(res)
+
+    def close_connection(self):
+        self.conn.close()
+        print("connection closed-1")
+    
+    def querry(self, qur):
+        self.cursor.execute(qur)
+        self.conn.commit()
+        res = self.cursor.fetchall()
+        return res
+
+    
+
+
+# join two list in python
+# a = [1,2,3]
+# b = [4,5,6]
+# c = a + b
+# print(c)
+
+if __name__ == "__main__":
+    data = {}
+    data["timestamp"] = 1
+    data["symbol"] = "testy"
+    data["fycode"] = 1
+    data["fyFlag"] = 1
+    data["pktLen"] = 1
+    data["ltp"] = 1
+    data["open_price"] = 1
+    data["high_price"] = 1
+    data["low_price"] = 1
+    data["close_price"] = 1
+    data["min_open_price"] = 1
+    data["min_high_price"] = 1
+    data["min_low_price"] = 1
+    data["min_close_price"] = 1
+    data["min_volume"] = 1
+    data["last_traded_qty"] = 1
+    data["last_traded_time"] = 1
+    data["avg_trade_price"] = 1
+    data["vol_traded_today"] = 1
+    data["tot_buy_qty"] = 1
+    data["tot_sell_qty"] = 1
+    # print(data)
+    
+    db = data_managment("test.db")
+    db.add_data(data)
+    db.get_data()
+    db.close_connection()
+
+
+
