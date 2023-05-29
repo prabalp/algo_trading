@@ -11,13 +11,13 @@ import traceback
 
 class data_managment:
     def __init__(self, db_name):
-        self.conn = sqlite3.connect(db_name)
+        self.conn = sqlite3.connect(db_name, check_same_thread=False)
         print("connection established")
         self.cursor = self.conn.cursor()
         # creating the table
         i_qur = """
             CREATE TABLE stocks
-            (timestamp INTEGER PRIMARY KEY,
+            (timestamp INTEGER,
             symbol TEXT,
             fycode INTEGER,
             fyFlag INTEGER,
@@ -48,34 +48,36 @@ class data_managment:
             print("table already present")
 
     def add_data(self, data):
-        print("adding data " + data["symbol"])
-        parms = (
-            data["timestamp"],
-            data["symbol"],
-            data["fycode"],
-            data["fyFlag"],
-            data["pktLen"],
-            data["ltp"],
-            data["open_price"],
-            data["high_price"],
-            data["low_price"],
-            data["close_price"],
-            data["min_open_price"],
-            data["min_high_price"],
-            data["min_low_price"],
-            data["min_close_price"],
-            data["min_volume"],
-            data["last_traded_qty"],
-            data["last_traded_time"],
-            data["avg_trade_price"],
-            data["vol_traded_today"],
-            data["tot_buy_qty"],
-            data["tot_sell_qty"],
-        )
+        # print("adding data " + data["symbol"])
+        print('haha1')
+        print('haha1.2')
+        # print(data["fycode"]) # the programe was not able to move beyond this because this was not even defined. Resercch abou it more and impreove this function in python
+        data_parms = [data["timestamp"],
+                        data["symbol"],
+                        data["fyCode"],
+                        data["fyFlag"],
+                        data["pktLen"],
+                        data["ltp"],
+                        data["open_price"],
+                        data["high_price"],
+                        data["low_price"],
+                        data["close_price"],
+                        data["min_open_price"],
+                        data["min_high_price"],
+                        data["min_low_price"],
+                        data["min_close_price"],
+                        data["min_volume"],
+                        data["last_traded_qty"],
+                        data["last_traded_time"],
+                        data["avg_trade_price"],
+                        data["vol_traded_today"],
+                        data["tot_buy_qty"],
+                        data["tot_sell_qty"]]
+        print('haha2')
         qur = """INSERT INTO stocks (
             timestamp,
             symbol, 
-            fycode, 
+            fyCode, 
             fyFlag, 
             pktLen, 
             ltp, 
@@ -98,15 +100,18 @@ class data_managment:
         # write a querry to insert data
         # print(qur)
         try:
-            self.cursor.execute(qur, parms)
+            self.cursor.execute(qur, data_parms)
             self.conn.commit()
             print("data added")
         except sqlite3.IntegrityError:
             print("data already present")
-            # print(traceback.format_exc())
+            print(traceback.format_exc())
             # print(traceback.print_exc())
         except:
             print("data not in correct format")
+            print(traceback.format_exc())
+            print(traceback.print_exc())
+        return 0
 
     def get_data(self):
         qur = """ SELECT * FROM stocks"""

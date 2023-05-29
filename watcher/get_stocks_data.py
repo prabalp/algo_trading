@@ -2,6 +2,7 @@ import os
 from fyers_api.Websocket import ws
 import data_managment
 import datetime
+from time import sleep
 
 curr_wd = os.getcwd()
 
@@ -41,9 +42,9 @@ db = data_managment.data_managment("test.db")
 def custom_message(msg):
     print("..................................")
     # change msg in perfect format
-    # db.add_data(msg[0])
-    # print(msg[0]["symbol"])
-    print("Custome Message " + str(msg))
+    db.add_data(msg[0])
+    print(msg[0]["symbol"])
+    # print("Custome Message " + str(msg))
 
 
 def get_live_data(client_id, access_token, symbol, data_type="symbolData"):
@@ -51,7 +52,7 @@ def get_live_data(client_id, access_token, symbol, data_type="symbolData"):
     fyersSocket = ws.FyersSocket(
         access_token=client_id + ":" + access_token,
         run_background=False,
-        log_path=curr_wd + "/livedata_logs" + "/socket_logs/",
+        log_path=curr_wd  + "/socket_logs/",
     )
 
     fyersSocket.websocket_data = custom_message
