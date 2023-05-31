@@ -1,5 +1,5 @@
 from fyers_api import fyersModel
-import os
+import os, threading, time
 import get_stocks_data, nifty200, gsheet_connect, profile_info
 
 client_id = "KPQVRS7JKZ-100"
@@ -26,7 +26,23 @@ if __name__ == "__main__":
     print(profile_info.get_profile_info(generate_auth_code()))
     tickers = nifty200.get_nifty200()
     # print(tickers[:50])
-    get_stocks_data.get_live_data(client_id, access_token, tickers[:50], "symbolData")
+    t1 = threading.Thread( target=get_stocks_data.get_live_data, args=(client_id, access_token, tickers[:50], "symbolData"))
+    t2 = threading.Thread( target=get_stocks_data.get_live_data, args=(client_id, access_token, tickers[:50], "symbolData"))
+
+    #juggle between the threads
+    # while True:
+    #     t1.start()
+    #     time.sleep(10)
+    #     t2.start()
+
+
+    # t1.start()
+    # time.sleep(10)
+    # t2.start()
+   
+
+    get_stocks_data.get_live_data(client_id, access_token, ["MCX:CRUDEOIL"], "symbolData")
+    # get_stocks_data.get_live_data(client_id, access_token, tickers[:50], "symbolData")
     # get_stocks_data.get_live_data(client_id, access_token, tickers[50:100], "symbolData")
     # get_stocks_data.get_live_data(client_id, access_token, tickers[100:150], "symbolData")
     # get_stocks_data.get_live_data(client_id, access_token, tickers[150:201], "symbolData")

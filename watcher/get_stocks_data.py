@@ -1,4 +1,4 @@
-import os
+import os, time
 from fyers_api.Websocket import ws
 import data_managment
 import datetime
@@ -49,13 +49,28 @@ def custom_message(msg):
 
 def get_live_data(client_id, access_token, symbol, data_type="symbolData"):
     # ws.websocket_data = custom_message
+    state = 0
+    print('Initiating Socket Connection')
     fyersSocket = ws.FyersSocket(
         access_token=client_id + ":" + access_token,
-        run_background=False,
+        run_background=True,
         log_path=curr_wd  + "/socket_logs/",
     )
 
     fyersSocket.websocket_data = custom_message
     # fyersSocket = ws.FyersSocket(access_token="KPQVRS7JKZ-100",run_background=True,log_path=curr_wd)
+    # fyersSocket.subscribe(symbol=symbol, data_type=data_type)
+    # fyersSocket.keep_running()
+    # time.sleep(10)
+    # fyersSocket.stop_running()
+    # time.sleep(30)
+    # fyersSocket.keep_running()
     fyersSocket.subscribe(symbol=symbol, data_type=data_type)
-    fyersSocket.keep_running()
+    while True:
+        fyersSocket.keep_running()
+        time.sleep(300)
+        fyersSocket.stop_running()
+        # fyersSocket.unsubscribe(symbol=symbol)
+    return
+
+"MCX:CRUDEOIL20JUNFUT"

@@ -49,8 +49,6 @@ class data_managment:
 
     def add_data(self, data):
         # print("adding data " + data["symbol"])
-        print('haha1')
-        print('haha1.2')
         # print(data["fycode"]) # the programe was not able to move beyond this because this was not even defined. Resercch abou it more and impreove this function in python
         data_parms = [data["timestamp"],
                         data["symbol"],
@@ -73,7 +71,7 @@ class data_managment:
                         data["vol_traded_today"],
                         data["tot_buy_qty"],
                         data["tot_sell_qty"]]
-        print('haha2')
+        
         qur = """INSERT INTO stocks (
             timestamp,
             symbol, 
