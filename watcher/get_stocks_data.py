@@ -73,4 +73,3 @@ def get_live_data(client_id, access_token, symbol, data_type="symbolData"):
         # fyersSocket.unsubscribe(symbol=symbol)
     return
 
-"MCX:CRUDEOIL20JUNFUT"

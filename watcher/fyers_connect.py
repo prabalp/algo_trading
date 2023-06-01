@@ -41,8 +41,8 @@ if __name__ == "__main__":
     # t2.start()
    
 
-    get_stocks_data.get_live_data(client_id, access_token, ["MCX:CRUDEOIL"], "symbolData")
-    # get_stocks_data.get_live_data(client_id, access_token, tickers[:50], "symbolData")
+    # get_stocks_data.get_live_data(client_id, access_token, ['NSE:MODIRUBBER-BE'], "symbolData")
+    get_stocks_data.get_live_data(client_id, access_token, tickers[:50], "symbolData")
     # get_stocks_data.get_live_data(client_id, access_token, tickers[50:100], "symbolData")
     # get_stocks_data.get_live_data(client_id, access_token, tickers[100:150], "symbolData")
     # get_stocks_data.get_live_data(client_id, access_token, tickers[150:201], "symbolData")
