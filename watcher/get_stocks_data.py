@@ -1,4 +1,4 @@
-import os, time
+import os, time, sys
 from fyers_api.Websocket import ws
 import data_managment
 import datetime
@@ -19,6 +19,7 @@ db = data_managment.data_managment("test.db")
 #   time_range = [["01-01", "03-31"], ["04-01","06-30"], ["07-01","09-30"], ["10-01","12-31"]]
 #   # stock_ticker_symbol = "NSE:SBIN-EQ"
 
+
 #   i = 0
 #   for x in time_range:
 #     date_from = year +"-"+x[0]
@@ -37,24 +38,25 @@ db = data_managment.data_managment("test.db")
 #       os.makedirs(dir)
 #     output.to_csv(output_location)
 #     i = i+1
-
-
 def custom_message(msg):
     print("..................................")
-    # change msg in perfect format
     db.add_data(msg[0])
+    # xn = xn + (sys.getsizeof(msg))
+    # print(type(xn))
+    # print(f"size of all msg {xn}")
+    print(f"size of one msg {sys.getsizeof(msg)}")
     print(msg[0]["symbol"])
     # print("Custome Message " + str(msg))
 
 
 def get_live_data(client_id, access_token, symbol, data_type="symbolData"):
     # ws.websocket_data = custom_message
-    state = 0
-    print('Initiating Socket Connection')
+
+    print("Initiating Socket Connection")
     fyersSocket = ws.FyersSocket(
         access_token=client_id + ":" + access_token,
         run_background=True,
-        log_path=curr_wd  + "/socket_logs/",
+        log_path=curr_wd + "/socket_logs/",
     )
 
     fyersSocket.websocket_data = custom_message
@@ -72,4 +74,3 @@ def get_live_data(client_id, access_token, symbol, data_type="symbolData"):
         fyersSocket.stop_running()
         # fyersSocket.unsubscribe(symbol=symbol)
     return
-
