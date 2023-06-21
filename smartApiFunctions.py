@@ -13,8 +13,8 @@ username = os.getenv("USER_NAME")
 pwd = os.getenv("PASSWORD")
 token = os.getenv("TOKEN")
 
-db_name = "nifty200_" + datetime.datetime.now().strftime("%x") + ".db"
-db = data_managment.data_managment("realtime_ticks_data.db")  # make the name dynamic
+
+db = data_managment.data_managment("realtime_ticks_data")  # make the name dynamic
 
 
 # 1. Implement stop connection function

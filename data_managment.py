@@ -1,5 +1,6 @@
 import sqlite3
 import traceback
+from datetime import datetime, timedelta, date
 
 # edge cases to handel
 # 1- if table is not present
@@ -8,16 +9,20 @@ import traceback
 # 4- if data is present(primary key errror)
 # 5- if data is not in correct format
 
+# find out how much dely does the pushing causes
+
 
 class data_managment:
     def __init__(self, db_name):
-        self.conn = sqlite3.connect(db_name, check_same_thread=False)
+        self.m_db_name = db_name + "_" + str(date.today()) + ".db"
+        self.conn = sqlite3.connect(self.m_db_name, check_same_thread=False)
         print("connection established")
         self.cursor = self.conn.cursor()
         # creating the table
         i_qur = """
             CREATE TABLE stocks
-            (exchange_type INTEGER,
+            (p_key STRING PRIMARY KEY,
+            exchange_type INTEGER,
             token INTEGER,
             sequence_number INTEGER,
             exchange_timestamp INTEGER,
@@ -30,7 +35,12 @@ class data_managment:
             open_price_of_the_day INTEGER,
             high_price_of_the_day INTEGER,
             low_price_of_the_day INTEGER,
-            closed_price INTEGER
+            closed_price INTEGER,
+            date_time STRING,
+            date STRING,
+            hour STRING,
+            minute STRING,
+            second STRING
             )
             """
         # self.cursor.execute(i_qur)
@@ -43,7 +53,15 @@ class data_managment:
     def add_data(self, data):
         # print("adding data " + data["symbol"])
         # print(data["fycode"]) # the programe was not able to move beyond this because this was not even defined. Resercch abou it more and impreove this function in python
+        dt = datetime.fromtimestamp(data["exchange_timestamp"])
+        date_time = dt.strftime("%Y-%m-%d %H:%M:%S")
+        date = dt.strftime("%Y-%m-%d")
+        hour = dt.strftime("%H")
+        minute = dt.strftime("%M")
+        second = dt.strftime("%S")
+        p_key = str(data["exchange_timestamp"]) + "_" + str(data["token"])
         data_parms = [
+            p_key,
             data["exchange_type"],
             data["token"],
             data["sequence_number"],
@@ -58,9 +76,15 @@ class data_managment:
             data["high_price_of_the_day"],
             data["low_price_of_the_day"],
             data["closed_price"],
+            date_time,
+            date,
+            hour,
+            minute,
+            second,
         ]
 
         qur = """INSERT INTO stocks (
+            p_key,
             exchange_type,
             token,
             sequence_number,
@@ -74,8 +98,13 @@ class data_managment:
             open_price_of_the_day,
             high_price_of_the_day,
             low_price_of_the_day,
-            closed_price)
-            VALUES (?,?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"""
+            closed_price,
+            date_time,
+            date,
+            hour,
+            minute,
+            second)
+            VALUES (?,?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?)"""
         # write a querry to insert data
         # print(qur)
         try:
@@ -110,6 +139,13 @@ class data_managment:
         res = self.cursor.fetchall()
         return res
 
+    def get_unprocessed(self, timestamp):
+        q = f""" SELECT * FROM stocks WHERE exchange_timestamp > {timestamp} """
+        self.cursor.execute(q)
+        self.conn.commit()
+        res = self.cursor.fetchall()
+        return res
+
 
 # join two list in python
 # a = [1,2,3]
@@ -122,7 +158,7 @@ if __name__ == "__main__":
     data["exchange_type"] = 1
     data["token"] = "1232"
     data["sequence_number"] = 1
-    data["exchange_timestamp"] = 1
+    data["exchange_timestamp"] = 1641181510
     data["last_traded_price"] = 1
     data["last_traded_quantity"] = 1
     data["average_traded_price"] = 1
@@ -135,7 +171,10 @@ if __name__ == "__main__":
     data["closed_price"] = 1
     # print(data)
 
-    db = data_managment("test.db")
-    db.add_data(data)
-    db.get_data()
+    db = data_managment("test")
+    # db.add_data(data)
+    # db.get_data()
+    r = db.get_unprocessed(1641181505)
+    print(len(r))
     db.close_connection()
+    # print(str(date.today()))
