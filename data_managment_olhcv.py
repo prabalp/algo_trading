@@ -12,9 +12,9 @@ from datetime import datetime, timedelta, date
 # find out how much dely does the pushing causes
 
 
-class data_managment:
+class data_managment_olhcv:
     def __init__(self, db_name):
-        self.m_db_name = db_name + "_" + str(date.today()) + ".db"
+        self.m_db_name = db_name + "_" + "olhcv" + "_" + str(date.today()) + ".db"
         self.conn = sqlite3.connect(self.m_db_name, check_same_thread=False)
         print("connection established")
         self.cursor = self.conn.cursor()
@@ -24,23 +24,17 @@ class data_managment:
             (p_key STRING PRIMARY KEY,
             exchange_type INTEGER,
             token INTEGER,
-            sequence_number INTEGER,
-            exchange_timestamp INTEGER,
-            last_traded_price INTEGER,
-            last_traded_quantity INTEGER,
-            average_traded_price INTEGER,
-            volume_trade_for_the_day INTEGER,
+            open INTEGER,
+            low INTEGER,
+            high INTEGER,
+            close INTEGER,
+            volume INTEGER,
             total_buy_quantity INTEGER,
             total_sell_quantity INTEGER,
-            open_price_of_the_day INTEGER,
-            high_price_of_the_day INTEGER,
-            low_price_of_the_day INTEGER,
-            closed_price INTEGER,
             date_time STRING,
             date STRING,
             hour STRING,
             minute STRING,
-            second STRING
             )
             """
         # self.cursor.execute(i_qur)
@@ -51,74 +45,73 @@ class data_managment:
             print("table already present")
 
     def add_data(self, data):
-        # print("adding data " + data["symbol"])
-        # print(data["fycode"]) # the programe was not able to move beyond this because this was not even defined. Resercch abou it more and impreove this function in python
+        # the programe was not able to move beyond this because this was not even defined. Resercch abou it more and impreove this function in python
         dt = datetime.fromtimestamp(data["exchange_timestamp"] / 1000)
         date_time = dt.strftime("%Y-%m-%d %H:%M:%S")
         date = dt.strftime("%Y-%m-%d")
         hour = dt.strftime("%H")
         minute = dt.strftime("%M")
-        second = dt.strftime("%S")
-        p_key = str(data["exchange_timestamp"]) + "_" + str(data["token"])
+        p_key = date + "_" + hour + "/" + minute + "_" + str(data["token"])
+        open = data["last_traded_price"]
+        low = data["last_traded_price"]
+        high = data["last_traded_price"]
+        close = data["last_traded_price"]
+        volume = data["last_traded_quantity"]
+
+        rec = self.querry('select * from stocks where p_key = "' + p_key + '"')
+        if rec != []:
+            low = min(rec[0][4], low)
+            high = max(rec[0][5], high)
+            volume += rec[0][7]
+
         data_parms = [
             p_key,
             data["exchange_type"],
             data["token"],
-            data["sequence_number"],
-            data["exchange_timestamp"],
-            data["last_traded_price"],
-            data["last_traded_quantity"],
-            data["average_traded_price"],
-            data["volume_trade_for_the_day"],
+            open,
+            low,
+            high,
+            close,
+            volume,
             data["total_buy_quantity"],
             data["total_sell_quantity"],
-            data["open_price_of_the_day"],
-            data["high_price_of_the_day"],
-            data["low_price_of_the_day"],
-            data["closed_price"],
             date_time,
             date,
             hour,
             minute,
-            second,
         ]
 
         qur = """INSERT INTO stocks (
             p_key,
             exchange_type,
             token,
-            sequence_number,
-            exchange_timestamp,
-            last_traded_price,
-            last_traded_quantity,
-            average_traded_price,
-            volume_trade_for_the_day,
+            open,
+            low,
+            high,
+            close,
+            volume,
             total_buy_quantity,
             total_sell_quantity,
-            open_price_of_the_day,
-            high_price_of_the_day,
-            low_price_of_the_day,
-            closed_price,
             date_time,
             date,
             hour,
-            minute,
-            second)
-            VALUES (?,?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?)"""
+            minute)
+            VALUES (?,?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"""
         # write a querry to insert data
         # print(qur)
         try:
             self.cursor.execute(qur, data_parms)
             self.conn.commit()
             print("data added")
+
         except sqlite3.IntegrityError:
             print("data already present")
-            print(traceback.format_exc())
+            # print(traceback.format_exc())
             # print(traceback.print_exc())
         except:
             print("data not in correct format")
-            print(traceback.format_exc())
-            print(traceback.print_exc())
+            # print(traceback.format_exc())
+            # print(traceback.print_exc())
         return 0
 
     def get_data(self):
@@ -190,10 +183,49 @@ if __name__ == "__main__":
         "closed_price": 159400,
     }
 
-    db = data_managment("test")
-    db.add_data(data)
-    db.get_data()
-    # r = db.get_unprocessed(1641181505)
-    # print(len(r))
+    db = data_managment_olhcv("test")
+    # db.add_data(data)
+    # db.get_data()
+    r = db.get_unprocessed(1641181505)
+    print(len(r))
     db.close_connection()
     # print(str(date.today()))
+
+
+# def mod_data(self, data):
+#         dt = datetime.fromtimestamp(data["exchange_timestamp"] / 1000)
+#         date_time = dt.strftime("%Y-%m-%d %H:%M")
+#         date = dt.strftime("%Y-%m-%d")
+#         hour = dt.strftime("%H")
+#         minute = dt.strftime("%M")
+
+#         if self.hr != 0 and self.min < minute:
+#             data_mod = {
+#                 "exchange_type": self.exchange_type,
+#                 "token": self.token,
+#                 "open": self.open,
+#                 "low": self.low,
+#                 "high": self.high,
+#                 "close": self.close,
+#                 "volume": self.volume,
+#                 "date_time": date_time,
+#                 "date": date,
+#                 "hour": self.hr,
+#                 "minute": self.min,
+#             }
+#             self.add_data(data_mod)
+#             self.hr = hour
+#             self.min = minute
+#             self.st = 1
+
+#         self.hr = hour
+#         self.min = minute
+#         if self.st == 1:
+#             self.open = data["last_traded_price"]
+#             self.st = 0
+#         self.low = min(data["last_traded_price"], self.low)
+#         self.high = max(data["last_traded_price"], self.high)
+#         self.close = data["last_traded_price"]
+#         self.volume += data["last_traded_quantity"]
+#         self.exchange_type = data["exchange_type"]
+#         self.token = data["token"]

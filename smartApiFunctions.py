@@ -36,20 +36,23 @@ class smartApiFunctions:
         self,
         stocks_symbol,
         exchange_type,
-        correlation_id="test_corr_id",
-        action=1,
-        mode=2,
+        correlation_id,
+        action,
+        mode,
     ) -> None:
+        print("socket connect")
         tokenList = [
             {"exchangeType": exchange_type, "tokens": stocks_symbol},
             # {"exchangeType": 5, "tokens": ["257273"]},
         ]
+        print(tokenList)
         sws = SmartWebSocketV2(
             self.AUTH_TOKEN, self.api_key, self.username, self.FEED_TOKEN
         )
 
         def on_data(wsapp, message):
             db.add_data(message)
+
             print("Ticks: {}".format(message))
 
         def on_open(wsapp):
@@ -72,12 +75,12 @@ class smartApiFunctions:
 
 
 if __name__ == "__main__":
-    stocks_symbol = ["257273"]
+    arr = ["250179", "257986", "254474", "256829"]
     sc = smartApiFunctions(api_key, username, pwd, token)
     sc._socket_connect(
-        stocks_symbol,
-        exchange_type=2,
-        correlation_id="test_corr_id",
+        stocks_symbol=arr,
+        exchange_type=5,
+        correlation_id="dfttest_1",
         action=1,
         mode=2,
     )

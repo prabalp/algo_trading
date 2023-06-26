@@ -93,6 +93,7 @@ class SmartWebSocketV2(object):
     #         self.on_message(wsapp, message)
 
     def _on_data(self, wsapp, data, data_type, continue_flag):
+        # print(data)
         if data_type == 2:
             parsed_message = self._parse_binary_data(data)
             self.on_data(wsapp, parsed_message)
@@ -264,6 +265,7 @@ class SmartWebSocketV2(object):
                 ping_payload=self.HEART_BEAT_MESSAGE,
             )
         except Exception as e:
+            print("Exception in connect", e)
             raise e
 
     def close_connection(self):
@@ -309,6 +311,7 @@ class SmartWebSocketV2(object):
                 "exchange_type": self._unpack_data(binary_data, 1, 2, byte_format="B")[
                     0
                 ],
+                # "token": "10235",
                 "token": SmartWebSocketV2._parse_token_value(binary_data[2:27]),
                 "sequence_number": self._unpack_data(
                     binary_data, 27, 35, byte_format="q"
@@ -388,6 +391,7 @@ class SmartWebSocketV2(object):
 
             return parsed_data
         except Exception as e:
+            print("Error while parsing binary data", e)
             raise e
 
     def _unpack_data(self, binary_data, start, end, byte_format="I"):
@@ -400,12 +404,22 @@ class SmartWebSocketV2(object):
         )
 
     @staticmethod
+    # def _parse_token_value(binary_packet):
+    #     token = ""
+    #     for i in range(len(binary_packet)):
+    #         if binary_packet[i] == b"\x00":
+    #             return token
+    #         token += binary_packet[i].encode("utf-8")
+    #     return token
+
     def _parse_token_value(binary_packet):
         token = ""
+        # print("bin packet", binary_packet)
         for i in range(len(binary_packet)):
             if chr(binary_packet[i]) == "\x00":
                 return token
             token += chr(binary_packet[i])
+        print("token", token)
         return token
 
     def _parse_best_5_buy_and_sell_data(self, binary_data):
