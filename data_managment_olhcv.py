@@ -34,7 +34,7 @@ class data_managment_olhcv:
             date_time STRING,
             date STRING,
             hour STRING,
-            minute STRING,
+            minute STRING
             )
             """
         # self.cursor.execute(i_qur)
@@ -59,7 +59,9 @@ class data_managment_olhcv:
         volume = data["last_traded_quantity"]
 
         rec = self.querry('select * from stocks where p_key = "' + p_key + '"')
+        # rec = self.querry("select * from stocks")
         if rec != []:
+            print("changing parameters")
             low = min(rec[0][4], low)
             high = max(rec[0][5], high)
             volume += rec[0][7]
@@ -106,6 +108,21 @@ class data_managment_olhcv:
 
         except sqlite3.IntegrityError:
             print("data already present")
+            print("data updating")
+            qur = """UPDATE stocks SET
+            low= ?,
+            high= ?,
+            close= ?,
+            volume= ?
+            WHERE p_key = ?"""
+            data_parms = [low, high, close, volume, p_key]
+            try:
+                self.cursor.execute(qur, data_parms)
+                self.conn.commit()
+                print("data updated")
+            except:
+                print("data not updated")
+
             # print(traceback.format_exc())
             # print(traceback.print_exc())
         except:
@@ -184,10 +201,10 @@ if __name__ == "__main__":
     }
 
     db = data_managment_olhcv("test")
-    # db.add_data(data)
-    # db.get_data()
-    r = db.get_unprocessed(1641181505)
-    print(len(r))
+    db.add_data(data)
+    db.get_data()
+    # r = db.get_unprocessed(1641181505)
+    # print(len(r))
     db.close_connection()
     # print(str(date.today()))
 
