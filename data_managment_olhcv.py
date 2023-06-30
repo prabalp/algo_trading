@@ -60,6 +60,7 @@ class data_managment_olhcv:
 
         rec = self.querry('select * from stocks where p_key = "' + p_key + '"')
         # rec = self.querry("select * from stocks")
+        print(rec)
         if rec != []:
             print("changing parameters")
             low = min(rec[0][4], low)
