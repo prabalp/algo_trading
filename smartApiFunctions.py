@@ -1,7 +1,6 @@
 from smartapi import SmartConnect
 from SmartWebSocketV2 import SmartWebSocketV2
 import data_managment_olhcv
-import threading
 import pyotp, time, os, datetime
 
 from dotenv import load_dotenv
@@ -17,6 +16,7 @@ token = os.getenv("TOKEN")
 db = data_managment_olhcv.data_managment_olhcv(
     "realtime_ticks_data"
 )  # make the name dynamic
+db.create_table()
 
 
 # 1. Implement stop connection function

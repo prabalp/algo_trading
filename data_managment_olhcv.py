@@ -16,8 +16,10 @@ class data_managment_olhcv:
     def __init__(self, db_name):
         self.m_db_name = db_name + "_" + "olhcv" + "_" + str(date.today()) + ".db"
         self.conn = sqlite3.connect(self.m_db_name, check_same_thread=False)
-        print("connection established")
         self.cursor = self.conn.cursor()
+        print("connection established")
+
+    def create_table(self, qur):
         # creating the table
         i_qur = """
             CREATE TABLE stocks
@@ -43,6 +45,7 @@ class data_managment_olhcv:
             print("new table created")
         except:
             print("table already present")
+        return "table created"
 
     def add_data(self, data):
         # the programe was not able to move beyond this because this was not even defined. Resercch abou it more and impreove this function in python
@@ -151,10 +154,11 @@ class data_managment_olhcv:
         return res
 
     def get_unprocessed(self, timestamp):
-        q = f""" SELECT * FROM stocks WHERE exchange_timestamp > {timestamp} """
+        q = f""" SELECT * FROM stocks WHERE exchange_timestamp > {timestamp}"""
         self.cursor.execute(q)
         self.conn.commit()
         res = self.cursor.fetchall()
+        # update the recent timestamp and return
         return res
 
 

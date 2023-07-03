@@ -3,6 +3,10 @@ from telegram.ext import ApplicationBuilder, CommandHandler, ContextTypes
 from dotenv import load_dotenv
 import os
 
+import algorithms as algos
+
+moving_average_signal = algos.price_actions.main.moving_average()
+
 load_dotenv()
 BOT_TOKEN = os.getenv("BOT_TOKEN")
 
