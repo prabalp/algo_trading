@@ -19,7 +19,7 @@ class data_managment_olhcv:
         self.cursor = self.conn.cursor()
         print("connection established")
 
-    def create_table(self, qur):
+    def create_table(self):
         # creating the table
         i_qur = """
             CREATE TABLE stocks
@@ -36,7 +36,8 @@ class data_managment_olhcv:
             date_time STRING,
             date STRING,
             hour STRING,
-            minute STRING
+            minute STRING,
+            moving_average INTEGER,
             )
             """
         # self.cursor.execute(i_qur)
@@ -153,8 +154,8 @@ class data_managment_olhcv:
         res = self.cursor.fetchall()
         return res
 
-    def get_unprocessed(self, timestamp):
-        q = f""" SELECT * FROM stocks WHERE exchange_timestamp > {timestamp}"""
+    def get_unprocessed(self, hr, min):
+        q = f""" SELECT * FROM stocks WHERE hour >= {hr} and minute >= {min}"""
         self.cursor.execute(q)
         self.conn.commit()
         res = self.cursor.fetchall()
