@@ -21,3 +21,14 @@ class signals:
                 print("sell")
             elif row["ma"] < row["close"]:
                 print("buy")
+
+    def test_signal(self):
+        print("test signal")
+        qur = f"""select * from {self.table_name} where moving_average is not null"""
+        res = self.db.querry(qur)
+        df = pd.DataFrame(res)
+        for index, row in df.iterrows():
+            if row[14] > row[6]:
+                print("sell")
+            elif row[14] < row[6]:
+                print("buy")

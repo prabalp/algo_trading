@@ -21,6 +21,7 @@ class data_managment_olhcv:
 
     def create_table(self):
         # creating the table
+        print("creating table")
         i_qur = """
             CREATE TABLE stocks
             (p_key STRING PRIMARY KEY,
@@ -38,6 +39,8 @@ class data_managment_olhcv:
             hour STRING,
             minute STRING,
             moving_average INTEGER,
+            utc_time INTEGER,
+            utc_date INTEGER
             )
             """
         # self.cursor.execute(i_qur)
@@ -46,10 +49,12 @@ class data_managment_olhcv:
             print("new table created")
         except:
             print("table already present")
+            print(traceback.format_exc())
         return "table created"
 
     def add_data(self, data):
         # the programe was not able to move beyond this because this was not even defined. Resercch abou it more and impreove this function in python
+        print("adding data")
         dt = datetime.fromtimestamp(data["exchange_timestamp"] / 1000)
         date_time = dt.strftime("%Y-%m-%d %H:%M:%S")
         date = dt.strftime("%Y-%m-%d")
@@ -62,7 +67,12 @@ class data_managment_olhcv:
         close = data["last_traded_price"]
         volume = data["last_traded_quantity"]
 
-        rec = self.querry('select * from stocks where p_key = "' + p_key + '"')
+        print("haha")
+        try:
+            rec = self.querry('select * from stocks where p_key = "' + p_key + '"')
+        except:
+            print("error in querry")
+            print(traceback.format_exc())
         # rec = self.querry("select * from stocks")
         print(rec)
         if rec != []:
@@ -153,6 +163,23 @@ class data_managment_olhcv:
         self.conn.commit()
         res = self.cursor.fetchall()
         return res
+
+    def update(self, value, p_key):
+        qur = """ UPDATE stocks SET
+            moving_average= ?,
+            utc_time= ?,
+            utc_date= ?
+            WHERE p_key = ?"""
+        hr = datetime.now().hour
+        min = datetime.now().minute
+        data_parms = [value, hr, min, p_key]
+        print(data_parms)
+        try:
+            self.cursor.execute(qur, data_parms)
+            self.conn.commit()
+            print("data updated")
+        except:
+            print("data not updated")
 
     def get_unprocessed(self, hr, min):
         q = f""" SELECT * FROM stocks WHERE hour >= {hr} and minute >= {min}"""

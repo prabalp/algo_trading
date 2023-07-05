@@ -53,6 +53,7 @@ class smartApiFunctions:
         )
 
         def on_data(wsapp, message):
+            print("on_data")
             db.add_data(message)
 
             print("Ticks: {}".format(message))

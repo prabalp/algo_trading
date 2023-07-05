@@ -80,8 +80,8 @@ arr = [
 ]
 
 tokenList = [
-    # {"exchangeType": 1, "tokens": arr},
-    {"exchangeType": 5, "tokens": ["250179", "257986", "254474", "256829"]},
+    {"exchangeType": 1, "tokens": arr},
+    # {"exchangeType": 5, "tokens": ["250179", "257986", "254474", "256829"]},
 ]
 # token = "mcx_fo|257273"
 # task = 'mw'

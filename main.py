@@ -4,6 +4,7 @@ import stocks_symbol
 from dotenv import load_dotenv
 import threading
 from algorithms.price_actions import indicators
+from algorithms.price_actions import signals
 
 load_dotenv()
 
@@ -24,7 +25,9 @@ def start_socket():
     )
 
 
-# t1 = threading.Thread(target=start_socket)\
+t1 = threading.Thread(target=start_socket)
+
+# t1.start()
 
 # start_socket()
 
@@ -37,8 +40,16 @@ def start_algo():
     indi.ma(period)
 
 
-start_algo()
+t2 = threading.Thread(target=start_algo)
+# start_algo()
+# t2.start()
 
 
 # thread 3
 # get signals using trading bot
+def signal_algo():
+    signal = signals.signals("realtime_ticks_data", 0, "stocks")
+    signal.test_signal()
+
+
+signal_algo()

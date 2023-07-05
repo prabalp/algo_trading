@@ -31,13 +31,37 @@ class Indicators:
         p_key = 0
         close = 6
         ma = 14
+        print(df_1)
         # print(df_1, df_2, df_3)
+        # use roleback here
         for index, row in df_1.iterrows():
-            print("row", row)
-            ma = (df_3[index][14] * period - df_2[index][6] + df_1[index][6]) / period[
-                "min"
-            ]
-            df_1[index][14] = ma
-            ts_h = df_1[index][12]
-            ts_m = df_1[index][13]
-        return "done"
+            # removed code from here
+            self.db.update(index, row[0])
+            print(index)
+            ts_h = df_1.loc[df_1[0] == row[0], 12]
+            ts_m = df_1.loc[df_1[0] == row[0], 13]
+
+        # updating the db
+
+        return ts_h, ts_m
+
+
+# print("row", row)
+# x = df_3.loc[df_3[0] == row[0], 14]
+# if x.empty:
+#     x = 0
+# ma = (
+#     x * period["min"]
+#     - df_2.loc[df_2[0] == row[0], 6]
+#     + df_1.loc[df_1[0] == row[0], 6]
+# ) / period["min"]
+# print(x)
+# print(df_2.loc[df_2[0] == row[0], 6])
+# print(df_1.loc[df_1[0] == row[0], 6])
+
+# print("moving average", ma)
+# df_1.loc[df_1[0] == row[0], 14] = index
+# print("row", row[0])
+# key = string(row[0])
+# qur = f"""update stocks set ma = {index} where p_key = {str(row[0])}"""
+# self.db.querry(qur)
