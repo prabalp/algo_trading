@@ -27,7 +27,7 @@ def start_socket():
 
 t1 = threading.Thread(target=start_socket)
 
-# t1.start()
+t1.start()
 
 # start_socket()
 
@@ -37,12 +37,15 @@ t1 = threading.Thread(target=start_socket)
 def start_algo():
     indi = indicators.Indicators("realtime_ticks_data")
     period = {"hr": 0, "min": 5}
-    indi.ma(period)
+    hr, min = indi.ma(period)
+    while True:
+        period = {"hr": hr, "min": min}
+        hr, min = indi.ma(period)
 
 
 t2 = threading.Thread(target=start_algo)
 # start_algo()
-# t2.start()
+t2.start()
 
 
 # thread 3
@@ -52,4 +55,4 @@ def signal_algo():
     signal.test_signal()
 
 
-signal_algo()
+# signal_algo()

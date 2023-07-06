@@ -2,6 +2,8 @@ import data_managment_olhcv as dm
 import pandas as pd
 from datetime import datetime
 
+# dont use class here
+
 
 class Indicators:
     def __init__(self, db_name):
@@ -9,35 +11,15 @@ class Indicators:
         self.db = dm.data_managment_olhcv(db_name)
 
     def ma(self, period):
-        # get the whole column of closed price form database
-        # ts_h = datetime.now().hour
-        # ts_m = datetime.now().minute
-        print(period)
-        ts_h = 0
-        ts_m = 0
-        # ts should be in minutes
+        ts_h = period["hr"]
+        ts_m = period["min"]
         arr_1 = self.db.get_unprocessed(ts_h, ts_m)
-        ## handle the edge cases like is no record found
-        # if arr_1['ma'] is not null then dont do the calculation
-        arr_2 = self.db.get_unprocessed(ts_h - period["hr"], ts_m - period["min"])
-        arr_3 = self.db.get_unprocessed(ts_h, ts_m - 1)
         df_1 = pd.DataFrame(arr_1)
-        df_2 = pd.DataFrame(arr_2)
-        df_3 = pd.DataFrame(arr_3)
-        # set the p_key as index
-        # df_1 = df_1.set_index(0)
-        # df_2 = df_2.set_index(0)
-        # df_3 = df_3.set_index(0)
-        p_key = 0
-        close = 6
-        ma = 14
-        print(df_1)
-        # print(df_1, df_2, df_3)
         # use roleback here
         for index, row in df_1.iterrows():
             # removed code from here
             self.db.update(index, row[0])
-            print(index)
+            # print(index)
             ts_h = df_1.loc[df_1[0] == row[0], 12]
             ts_m = df_1.loc[df_1[0] == row[0], 13]
 
