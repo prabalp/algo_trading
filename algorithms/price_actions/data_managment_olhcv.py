@@ -1,6 +1,7 @@
 import sqlite3
 import traceback
 from datetime import datetime, timedelta, date
+import centralState
 
 # edge cases to handel
 # 1- if table is not present
@@ -39,7 +40,8 @@ class data_managment_olhcv:
             total_sell_quantity INTEGER,
             date_time STRING,
             date STRING,
-            hour_min INTEGER
+            hour STRING,
+            minute STRING
             )
             """
         # self.cursor.execute(i_qur)
@@ -59,7 +61,6 @@ class data_managment_olhcv:
         date = dt.strftime("%Y-%m-%d")
         self.curr_hr = dt.strftime("%H")
         self.curr_min = dt.strftime("%M")
-        hr_min = self.curr_hr + self.curr_min
         p_key = (
             date + "_" + self.curr_hr + "/" + self.curr_min + "_" + str(data["token"])
         )
@@ -96,7 +97,8 @@ class data_managment_olhcv:
             data["total_sell_quantity"],
             date_time,
             date,
-            hr_min,
+            self.curr_hr,
+            self.curr_min,
         ]
 
         qur = """INSERT INTO stocks (
@@ -112,8 +114,9 @@ class data_managment_olhcv:
             total_sell_quantity,
             date_time,
             date,
-            hour_min)
-            VALUES (?,?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"""
+            hour,
+            minute)
+            VALUES (?,?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"""
         # write a querry to insert data
         # print(qur)
         try:
@@ -181,8 +184,8 @@ class data_managment_olhcv:
         except:
             print("data not updated")
 
-    def get_unprocessed(self, hr_min):
-        q = f""" SELECT * FROM stocks WHERE hour_min >= {hr_min}"""
+    def get_unprocessed(self, hr, min):
+        q = f""" SELECT * FROM stocks WHERE hour >= {hr} and minute >= {min} and hour<{self.curr_hr} and minute <{self.curr_min}"""
         self.cursor.execute(q)
         self.conn.commit()
         res = self.cursor.fetchall()
