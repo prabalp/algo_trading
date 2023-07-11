@@ -17,8 +17,8 @@ class data_managment_olhcv:
         self.m_db_name = db_name + "_" + "olhcv" + "_" + str(date.today()) + ".db"
         self.conn = sqlite3.connect(self.m_db_name, check_same_thread=False)
         self.cursor = self.conn.cursor()
-        self.curr_hr = 23
-        self.curr_min = 59
+        # self.curr_hr = 23
+        # self.curr_min = 59
         # centralState.CentralState(1985).addValue()
         print("connection established")
 
@@ -48,7 +48,7 @@ class data_managment_olhcv:
             print("new table created")
         except:
             print("table already present")
-            print(traceback.format_exc())
+            # print(traceback.format_exc())
         return "table created"
 
     def add_data(self, data):
@@ -182,11 +182,13 @@ class data_managment_olhcv:
             print("data not updated")
 
     def get_unprocessed(self, hr_min):
-        q = f""" SELECT * FROM stocks WHERE hour_min >= {hr_min}"""
+        print(hr_min)
+        q = f""" SELECT * FROM stocks WHERE hour_min >{hr_min} """
         self.cursor.execute(q)
         self.conn.commit()
         res = self.cursor.fetchall()
         # update the recent timestamp and return
+        # print(res)
         return res
 
 

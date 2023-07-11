@@ -1,8 +1,10 @@
 import data_managment_olhcv as dm
 import pandas as pd
-from datetime import datetime
+import time
 
 # dont use class here
+
+# create a single table for all the indicators
 
 
 class Indicators:
@@ -31,8 +33,9 @@ class Indicators:
     def rsi(self, ts_h_m, period):
         # use of rolling function
         df = pd.DataFrame(self.db.get_unprocessed(ts_h_m))
+        # print(df)
         if len(df) == 0:
-            print("Waiting for recent data")
+            print("Waiting for recent data_1")
             return ts_h_m
         col_name = [
             "p_key",
@@ -47,37 +50,47 @@ class Indicators:
             "total_sell_quantity",
             "date_time",
             "date",
-            "hour",
-            "minute",
+            "hour_min",
         ]
         col_name_dict = {}
         for i, n in enumerate(col_name):
             col_name_dict[i] = n
         df = df.rename(columns=col_name_dict)
         df = df.sort_values(by=["hour_min"])
+        ts_h_m_n = df["hour_min"].iloc[-1]
+        df = df[df["hour_min"] < ts_h_m_n]
+        if len(df) == 0:
+            print("Waiting for recent data_2")
+            return ts_h_m
         df["change"] = (df["close"] - df["open"]) / df["open"]
         # df["change"] = (
         #     df.groupby("token")["close"] - df.groupby("token")["open"]
         # ) / df.groupby("token")["open"]
 
-        create_table = """
-        create table rsi 
-        (p_key STRING,
-        change INTEGER
-        
-        )
-        """
-        try:
-            self.db.querry(create_table)
-        except:
-            print("table already present")
+        # write a code to exclude the last minuit data
 
+        # create_table = """
+        # create table rsi
+        # (p_key STRING,
+        # change INTEGER
+
+        # )
+        # """
+        # try:
+        #     self.db.querry(create_table)
+        # except:
+        #     print("table already present")
+
+        ts_h_m = ts_h_m_n
         df_e = df.loc[:, ["p_key", "change"]]
-        ts_h_m = df["hour_min"].iloc[-1]
-        print(df["hour"].iloc[-1])
+        df_sig = df_e[df_e["change"] > 0.01]
 
+        # print(df["hour"].iloc[-1])
+
+        df_e = df_e[df_e["change"] > 0.01]
+        # does this below method means we dont have to create the table
         df_e.to_sql("rsi", self.conn, if_exists="append", index=False)
-
+        df_sig.to_sql("signals", self.conn, if_exists="append", index=False)
         return ts_h_m
         # print(df_e)
 
