@@ -7,9 +7,7 @@ from algorithms.price_actions import indicators
 from tele_bot import bot_send_msg
 import data_managment_olhcv
 
-# from algorithms.price_actions import signals
 
-# import centralState
 import data_test
 
 load_dotenv()
@@ -23,7 +21,6 @@ arr = stocks_symbol.stock_symbol()[:10]
 
 db_name = "realtime_ticks_data"
 ticks_table = "stocks_realtime"
-# algo_table = ''
 oldest_time = ""
 newest_time = ""
 
@@ -36,10 +33,6 @@ def getTime():
     formatted_datetime = time.strftime("%H%M", current_struct_time)
     return int(formatted_datetime)
 
-
-# cs = centralState.CentralState(1985)
-# cs.addValue("o_time", 0)
-# cs.addValue("l_time", 0)
 
 socket_obj = smartApiFunctions.smartApiFunctions(api_key, username, pwd, token)
 
@@ -75,7 +68,7 @@ def start_algo():
 t2 = threading.Thread(target=start_algo)
 # start_algo()
 
-t2.start()
+# t2.start()
 
 
 # thread 3
@@ -105,4 +98,4 @@ def signalAlgo():
         l = signalUpdate(l)
 
 
-signalAlgo()
+# signalAlgo()
